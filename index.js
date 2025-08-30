@@ -209,27 +209,39 @@ if (pianoInput) {
     // 防止安卓输入法自动大写
     pianoInput.setAttribute('autocapitalize', 'none');
 
-    // 监听聚焦和失焦，调整主内容位置，避免被键盘遮挡
+    // 监听聚焦和失焦，只移动按键值和三行情诗部分，避免被键盘遮挡
     pianoInput.addEventListener('focus', function() {
-        var box = document.getElementById('box');
-        var boxup = document.getElementById('boxup');
-        if (box) {
-            box.style.transform = 'translateY(-15vh) scale(0.95)';
-            box.style.transition = 'transform 0.3s';
+        var boxl = document.getElementById('boxl');
+        var boxr = document.getElementById('boxr');
+        if (boxl) {
+            boxl.style.transform = 'translateY(-18vh) scale(0.95)';
+            boxl.style.transition = 'transform 0.3s';
         }
-        if (boxup) {
-            boxup.style.transform = 'translateY(-15vh) scale(0.95)';
-            boxup.style.transition = 'transform 0.3s';
+        if (boxr) {
+            boxr.style.transform = 'translateY(-18vh) scale(0.95)';
+            boxr.style.transition = 'transform 0.3s';
         }
     });
     pianoInput.addEventListener('blur', function() {
-        var box = document.getElementById('box');
-        var boxup = document.getElementById('boxup');
-        if (box) {
-            box.style.transform = '';
+        var boxl = document.getElementById('boxl');
+        var boxr = document.getElementById('boxr');
+        if (boxl) {
+            boxl.style.transform = '';
         }
-        if (boxup) {
-            boxup.style.transform = '';
+        if (boxr) {
+            boxr.style.transform = '';
+        }
+    });
+
+    // 1-点击页面任意位置弹出键盘面板
+    document.body.addEventListener('touchend', function(e) {
+        if (clickb && document.activeElement !== pianoInput) {
+            pianoInput.focus();
+        }
+    });
+    document.body.addEventListener('mousedown', function(e) {
+        if (clickb && document.activeElement !== pianoInput) {
+            pianoInput.focus();
         }
     });
 }
