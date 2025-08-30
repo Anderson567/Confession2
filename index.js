@@ -57,6 +57,12 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
      setTimeout(function(){
          document.getElementById("fronclick").style.zIndex=-300;
          document.getElementById("box").style.opacity=1;
+        // 弹奏界面显示时，自动聚焦隐藏input，弹出软键盘
+        var pianoInput = document.getElementById('pianoInput');
+        if (pianoInput) {
+            pianoInput.value = '';
+            pianoInput.focus();
+        }
      },1500);//让播放按钮消失了
      //yinyan.style.opacity=0;
      clickb=true;
@@ -184,3 +190,22 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
  
  
  window.onkeyup=fl;
+
+// 监听隐藏input的输入事件，映射到钢琴弹奏
+var pianoInput = document.getElementById('pianoInput');
+if (pianoInput) {
+    pianoInput.addEventListener('input', function(e) {
+        if (!clickb) return;
+        var val = pianoInput.value;
+        if (val && val.length > 0) {
+            var key = val[val.length - 1];
+            // 只处理字母
+            if ((key >= 'a' && key <= 'z') || (key >= 'A' && key <= 'Z')) {
+                fl({key: key});
+            }
+            pianoInput.value = '';
+        }
+    });
+    // 防止安卓输入法自动大写
+    pianoInput.setAttribute('autocapitalize', 'none');
+}
