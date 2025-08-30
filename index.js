@@ -235,12 +235,12 @@ if (pianoInput) {
 
     // 1-点击页面任意位置弹出键盘面板
     document.body.addEventListener('touchend', function(e) {
-        if (clickb && document.activeElement !== pianoInput) {
+        if (document.activeElement !== pianoInput) {
             pianoInput.focus();
         }
     });
     document.body.addEventListener('mousedown', function(e) {
-        if (clickb && document.activeElement !== pianoInput) {
+        if (document.activeElement !== pianoInput) {
             pianoInput.focus();
         }
     });
