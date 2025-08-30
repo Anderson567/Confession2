@@ -208,4 +208,28 @@ if (pianoInput) {
     });
     // 防止安卓输入法自动大写
     pianoInput.setAttribute('autocapitalize', 'none');
+
+    // 监听聚焦和失焦，调整主内容位置，避免被键盘遮挡
+    pianoInput.addEventListener('focus', function() {
+        var box = document.getElementById('box');
+        var boxup = document.getElementById('boxup');
+        if (box) {
+            box.style.transform = 'translateY(-15vh) scale(0.95)';
+            box.style.transition = 'transform 0.3s';
+        }
+        if (boxup) {
+            boxup.style.transform = 'translateY(-15vh) scale(0.95)';
+            boxup.style.transition = 'transform 0.3s';
+        }
+    });
+    pianoInput.addEventListener('blur', function() {
+        var box = document.getElementById('box');
+        var boxup = document.getElementById('boxup');
+        if (box) {
+            box.style.transform = '';
+        }
+        if (boxup) {
+            boxup.style.transform = '';
+        }
+    });
 }
