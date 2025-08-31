@@ -45,13 +45,27 @@
 
 
 
+
+// 预加载所有音频文件
+const audioCache = {};
+const audioList = [
+    '1.mp3','2.mp3','3.mp3','4.mp3','5.mp3','6.mp3','7.mp3','8.mp3','9.mp3','10.mp3','11.mp3','12.mp3','13.mp3','14.mp3','15.mp3','16.mp3','17.mp3','18.mp3','19.mp3','20.mp3','21.mp3','22.mp3','23.mp3','24.mp3','25.mp3','26.mp3','55.mp3','snjxh.mp3','snjxh2.mp3'
+];
+audioList.forEach(function(name){
+    const audio = new Audio();
+    audio.src = './video/' + name;
+    audio.preload = 'auto';
+    audioCache[name] = audio;
+});
+
 let clickb=false;//判断播放按钮是否已经按过了，如果已经按过了才可以执行键盘事件
  
  function funclick()
  {
-     let x = document.createElement("audio");
-     x.setAttribute("src", "./video/55.mp3");
-     x.setAttribute("autoplay","autoplay");
+    // 播放按钮音效用预加载
+    let x = audioCache['55.mp3'] ? audioCache['55.mp3'].cloneNode() : new Audio('./video/55.mp3');
+    x.currentTime = 0;
+    x.play();
      let yinyan=document.getElementById("yinyan");
      yinyan.setAttribute("style","opacity:0");
      setTimeout(function(){
@@ -143,9 +157,11 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
      {
          let p=a[k[key]];
          s=s+p.name;
-         let x = document.createElement("audio");
-         x.setAttribute("src", `./video/${p.yin}.mp3`);
-         x.setAttribute("autoplay","autoplay");
+         // 钢琴按键音效用预加载
+         let keyAudioName = `${p.yin}.mp3`;
+         let x = audioCache[keyAudioName] ? audioCache[keyAudioName].cloneNode() : new Audio('./video/' + keyAudioName);
+         x.currentTime = 0;
+         x.play();
          let box=document.getElementById("box");
          let boxl=document.getElementById("boxl");
          let boxr=document.getElementById("boxr");
@@ -177,10 +193,10 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
                  let box1=document.getElementById("box1");
                  box1.style.zIndex=7;
                  box1.style.opacity=1;
-                 let music=document.createElement("audio");
-                 x.setAttribute("src", `./video/snjxh.mp3`);
-                 x.setAttribute("autoplay","autoplay");
-                 x.setAttribute("loop","loop");
+                 let music = audioCache['snjxh.mp3'] ? audioCache['snjxh.mp3'].cloneNode() : new Audio('./video/snjxh.mp3');
+                 music.loop = true;
+                 music.currentTime = 0;
+                 music.play();
              },750);
              setTimeout(typewrite,3000);//进行打字
          }
