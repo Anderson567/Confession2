@@ -46,26 +46,48 @@
 
 
 
-// 预加载所有音频文件
-const audioCache = {};
+
+// Web Audio API 低延迟音频播放
+const audioBufferCache = {};
 const audioList = [
     '1.mp3','2.mp3','3.mp3','4.mp3','5.mp3','6.mp3','7.mp3','8.mp3','9.mp3','10.mp3','11.mp3','12.mp3','13.mp3','14.mp3','15.mp3','16.mp3','17.mp3','18.mp3','19.mp3','20.mp3','21.mp3','22.mp3','23.mp3','24.mp3','25.mp3','26.mp3','55.mp3','snjxh.mp3','snjxh2.mp3'
 ];
-audioList.forEach(function(name){
-    const audio = new Audio();
-    audio.src = './video/' + name;
-    audio.preload = 'auto';
-    audioCache[name] = audio;
-});
+let audioContext;
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}
+function loadAudioBuffer(name, url) {
+    return fetch(url)
+        .then(res => res.arrayBuffer())
+        .then(arrayBuffer => getAudioContext().decodeAudioData(arrayBuffer))
+        .then(audioBuffer => {
+            audioBufferCache[name] = audioBuffer;
+        });
+}
+// 预加载所有音频为buffer
+Promise.all(audioList.map(name => loadAudioBuffer(name, './video/' + name)));
+function playBuffer(name, loop=false) {
+    const ctx = getAudioContext();
+    const buffer = audioBufferCache[name];
+    if (buffer) {
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.loop = loop;
+        source.start(0);
+        return source;
+    }
+}
 
 let clickb=false;//判断播放按钮是否已经按过了，如果已经按过了才可以执行键盘事件
  
  function funclick()
  {
-    // 播放按钮音效用预加载
-    let x = audioCache['55.mp3'] ? audioCache['55.mp3'].cloneNode() : new Audio('./video/55.mp3');
-    x.currentTime = 0;
-    x.play();
+    // 播放按钮音效用Web Audio API
+    playBuffer('55.mp3');
      let yinyan=document.getElementById("yinyan");
      yinyan.setAttribute("style","opacity:0");
      setTimeout(function(){
@@ -157,11 +179,9 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
      {
          let p=a[k[key]];
          s=s+p.name;
-         // 钢琴按键音效用预加载
+         // 钢琴按键音效用Web Audio API
          let keyAudioName = `${p.yin}.mp3`;
-         let x = audioCache[keyAudioName] ? audioCache[keyAudioName].cloneNode() : new Audio('./video/' + keyAudioName);
-         x.currentTime = 0;
-         x.play();
+         playBuffer(keyAudioName);
          let box=document.getElementById("box");
          let boxl=document.getElementById("boxl");
          let boxr=document.getElementById("boxr");
@@ -193,10 +213,8 @@ let clickb=false;//判断播放按钮是否已经按过了，如果已经按过�
                  let box1=document.getElementById("box1");
                  box1.style.zIndex=7;
                  box1.style.opacity=1;
-                 let music = audioCache['snjxh.mp3'] ? audioCache['snjxh.mp3'].cloneNode() : new Audio('./video/snjxh.mp3');
-                 music.loop = true;
-                 music.currentTime = 0;
-                 music.play();
+                 // 循环播放特殊音效
+                 let musicSource = playBuffer('snjxh.mp3', true);
              },750);
              setTimeout(typewrite,3000);//进行打字
          }
